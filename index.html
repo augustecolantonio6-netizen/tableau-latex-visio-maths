@@ -97,17 +97,19 @@
     .board:empty::before { content: attr(data-placeholder); color: #a2adbb; pointer-events: none; }
     .board:focus { border-color: #bed1ef; box-shadow: 0 0 0 3px rgba(36, 95, 202, .06), 0 3px 12px rgba(29,47,71,.06); }
     .vector-token, .vector-preview {
-      position: relative; display: inline-block; padding: .22em .08em 0 .02em; line-height: 1.1;
+      position: relative; display: inline-block; box-sizing: border-box;
+      padding: .24em .09em .02em .02em; line-height: 1.05;
       white-space: nowrap; vertical-align: baseline; user-select: all;
     }
     .vector-token::before, .vector-preview::before {
-      content: ""; position: absolute; left: .02em; right: .10em; top: .06em;
-      border-top: 1.2px solid currentColor; pointer-events: none;
+      content: ""; position: absolute; left: 0; right: -.04em; top: .06em;
+      border-top: 1.35px solid currentColor; pointer-events: none;
     }
     .vector-token::after, .vector-preview::after {
-      content: "›"; position: absolute; top: -.20em; right: -.04em; padding: 0;
-      background: transparent; font: 700 .82em/1 "Cambria Math", Cambria, serif;
-      transform: scaleX(.86); pointer-events: none;
+      content: ""; box-sizing: border-box; position: absolute;
+      right: -.025em; top: -.05em; width: .22em; height: .22em;
+      border-top: 1.35px solid currentColor; border-right: 1.35px solid currentColor;
+      transform: rotate(45deg); transform-origin: center; pointer-events: none;
     }
     .fraction-token {
       display: inline-grid; grid-template-rows: auto auto; align-items: stretch;
@@ -597,8 +599,10 @@
         if (node.nodeType !== Node.ELEMENT_NODE) return "";
         if (node.classList && node.classList.contains("vector-token")) {
           const label = escapeHtml(node.textContent || "");
-          return '<span style="display:inline-block;position:relative;padding:.20em .08em 0 .02em;border-top:1px solid #172a43;line-height:1.1;white-space:nowrap;">' +
-            label + '<span style="position:absolute;right:-.04em;top:-.20em;font-family:serif;font-size:.82em;font-weight:bold;line-height:1;">›</span></span>';
+          return '<span style="display:inline-block;position:relative;box-sizing:border-box;padding:.24em .09em .02em .02em;line-height:1.05;white-space:nowrap;vertical-align:baseline;">' +
+            label +
+            '<span style="position:absolute;left:0;right:-.04em;top:.06em;border-top:1.35px solid #172a43;"></span>' +
+            '<span style="box-sizing:border-box;position:absolute;right:-.025em;top:-.05em;width:.22em;height:.22em;border-top:1.35px solid #172a43;border-right:1.35px solid #172a43;transform:rotate(45deg);transform-origin:center;"></span></span>';
         }
         if (node.classList && node.classList.contains("fraction-token")) {
           const top = node.querySelector(".fraction-num");
