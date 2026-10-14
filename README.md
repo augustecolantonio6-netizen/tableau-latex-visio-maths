@@ -6,14 +6,16 @@ Tableau blanc de mathématiques pensé pour une séance en visioconférence : é
 
 - **Édition directe** : écrire dans le tableau, sans afficher de code LaTeX.
 - **Bibliothèque de symboles** : bases, fractions empilées avec barre horizontale, vecteurs, puissances/indices/racines, alphabet grec et relations.
-- **Vecteurs mis en évidence** : les boutons u⃗, v⃗, AB⃗, etc. affichent une flèche au-dessus du nom dans le tableau.
-- **Copie texte** : copie une notation mathématique Unicode, pas du LaTeX brut.
+- **Vecteurs personnalisés** : crée un vecteur avec le nom de ton choix (par exemple MN, w ou u₁), sans être limité à la bibliothèque prédéfinie.
+- **Coordonnées en colonne** : crée un vecteur en 2D ou 3D avec les coordonnées saisies, affichées verticalement entre crochets.
+- **Vecteurs mis en évidence** : les symboles de la bibliothèque et les vecteurs personnalisés affichent une flèche dessinée au-dessus du nom.
+- **Copie texte** : copie une notation mathématique Unicode, pas du LaTeX brut. Les coordonnées en colonne utilisent des crochets Unicode et des retours à la ligne.
 - **Copie texte + rendu** : place du texte brut et du HTML mis en forme dans le presse-papiers lorsque le navigateur autorise l'écriture enrichie.
 - **Annulation** : bouton et raccourci Ctrl/Cmd + Z.
 - **Sauvegarde automatique locale** : le tableau est restauré depuis le stockage du navigateur sur le même appareil.
 - **Responsive** : interface utilisable sur ordinateur, tablette et mobile.
 
-Les fractions sont affichées avec un numérateur au-dessus d'une barre horizontale et un dénominateur en dessous. Dans la copie en texte brut, elles deviennent une écriture linéaire telle que 1/2. Le texte brut utilise une flèche combinante Unicode pour représenter les vecteurs (par exemple u⃗). La copie enrichie représente les vecteurs à deux lettres avec une flèche visuelle au-dessus de l'ensemble quand l'application de destination conserve les styles HTML. Les navigateurs qui ne prennent pas en charge la copie enrichie retombent sur le texte Unicode.
+Les fractions sont affichées avec un numérateur au-dessus d'une barre horizontale et un dénominateur en dessous. Dans la copie en texte brut, elles deviennent une écriture linéaire telle que 1/2. Le texte brut utilise une flèche combinante Unicode pour représenter les vecteurs personnalisés (par exemple u⃗). Les vecteurs de coordonnées sont rendus en colonne dans le tableau et convertis en notation à crochets Unicode avec des lignes séparées lors de la copie texte. La copie enrichie conserve autant que possible le rendu en colonne et les flèches dessinées au-dessus des noms lorsque l'application de destination accepte le HTML mis en forme. Les navigateurs qui ne prennent pas en charge la copie enrichie retombent sur le texte Unicode.
 
 ## Développement local
 
