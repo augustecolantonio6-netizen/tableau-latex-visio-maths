@@ -426,9 +426,9 @@
       }
 
       function insertText(value, selectPlaceholder) {
+        const range = findBoardRange();
         board.focus();
         const previous = board.innerHTML;
-        const range = findBoardRange();
         range.deleteContents();
         const node = document.createTextNode(value);
         range.insertNode(node);
@@ -466,9 +466,9 @@
       }
 
       function insertVector(value) {
+        const range = findBoardRange();
         board.focus();
         const previous = board.innerHTML;
-        const range = findBoardRange();
         range.deleteContents();
         const token = makeVectorToken(value);
         range.insertNode(token);
@@ -483,9 +483,9 @@
       }
 
       function insertVectorExpression(parts) {
+        const range = findBoardRange();
         board.focus();
         const previous = board.innerHTML;
-        const range = findBoardRange();
         range.deleteContents();
 
         const fragment = document.createDocumentFragment();
@@ -511,9 +511,9 @@
       }
 
       function insertFraction(numerator, denominator, template) {
+        const range = findBoardRange();
         board.focus();
         const previous = board.innerHTML;
-        const range = findBoardRange();
         range.deleteContents();
 
         const fraction = document.createElement("span");
