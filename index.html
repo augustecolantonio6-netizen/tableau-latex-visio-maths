@@ -131,6 +131,33 @@
     .fraction-preview-num, .fraction-preview-den { min-width: 1.2em; padding: 1px 3px; text-align: center; }
     .fraction-preview-den { border-top: 1px solid currentColor; }
     .fraction-token .fraction-num:focus, .fraction-token .fraction-den:focus { background: #edf4ff; outline: none; }
+    .vector-tools { padding: 12px 14px; background: #f8faff; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+    .vector-tools-title { margin: 0 0 1px; color: var(--ink); font-size: 11px; font-weight: 800; letter-spacing: .02em; }
+    .vector-tool { border: 1px solid #dfe7f2; background: white; border-radius: 9px; overflow: hidden; }
+    .vector-tool summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 11px; cursor: pointer; list-style: none; color: #284263; font-size: 11px; font-weight: 750; }
+    .vector-tool summary::-webkit-details-marker { display: none; }
+    .vector-tool summary::after { content: "+"; color: var(--blue); font-size: 17px; line-height: 1; font-weight: 500; }
+    .vector-tool[open] summary::after { content: "−"; }
+    .vector-tool-body { padding: 0 10px 11px; display: grid; gap: 7px; }
+    .tool-label { display: block; color: #5c6b7f; font-size: 10px; font-weight: 700; margin-bottom: 4px; }
+    .tool-input, .tool-select { width: 100%; min-width: 0; height: 35px; border: 1px solid #dce4ee; border-radius: 7px; padding: 0 9px; color: var(--ink); background: #fff; font-size: 12px; }
+    .tool-input:focus, .tool-select:focus { border-color: #96b7ee; outline: 3px solid rgba(36,95,202,.10); }
+    .tool-hint { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .tool-button { width: 100%; min-height: 35px; padding: 7px 10px; font-size: 11px; }
+    .coord-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
+    .coord-field[hidden] { display: none; }
+    .coord-field { min-width: 0; }
+    .coord-vector-demo { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 7px; background: #f6f8fb; border-radius: 7px; color: #364e6f; font: 16px/1.15 "Cambria Math", Cambria, serif; }
+    .column-vector {
+      display: inline-flex; align-items: stretch; vertical-align: middle; white-space: nowrap;
+      margin: .08em .12em; font-size: .84em; line-height: 1.12; user-select: all;
+    }
+    .column-vector-values { display: flex; flex-direction: column; justify-content: center; min-width: 1.1em; text-align: center; padding: .04em .12em; }
+    .column-coordinate { display: block; min-height: 1.12em; text-align: center; padding: .015em .08em; }
+    .column-vector-bracket { display: block; align-self: stretch; width: .42em; margin: .05em 0; }
+    .column-vector-bracket.left { border-left: 1.35px solid currentColor; border-top: 1.35px solid currentColor; border-bottom: 1.35px solid currentColor; }
+    .column-vector-bracket.right { border-right: 1.35px solid currentColor; border-top: 1.35px solid currentColor; border-bottom: 1.35px solid currentColor; }
+    .column-vector:focus-visible { outline: 2px solid rgba(36,95,202,.25); outline-offset: 2px; }
     .workspace-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
     .keyboard-tip { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
     kbd { padding: 2px 5px; border: 1px solid #dfe5ec; border-radius: 4px; background: #f8fafc; color: #617086; font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -201,6 +228,54 @@
         <input class="search-input" id="symbolSearch" type="search" placeholder="Ex. vecteur, racine, alpha…" autocomplete="off">
       </div>
       <nav class="category-list" id="categories" aria-label="Catégories de symboles"></nav>
+      <section class="vector-tools" aria-labelledby="vectorToolsTitle">
+        <h3 class="vector-tools-title" id="vectorToolsTitle">Outils vecteurs</h3>
+        <details class="vector-tool">
+          <summary>Créer un vecteur personnalisé</summary>
+          <div class="vector-tool-body">
+            <div>
+              <label class="tool-label" for="customVectorName">Nom du vecteur</label>
+              <input class="tool-input" id="customVectorName" type="text" value="MN" maxlength="16" placeholder="Ex. AB, w, u₁" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="coord-vector-demo" aria-hidden="true"><span id="customVectorPreview" class="vector-preview">MN</span></div>
+            <p class="tool-hint">Saisis les lettres ou le nom voulu. La flèche sera dessinée au-dessus du nom complet.</p>
+            <button class="btn primary tool-button" id="insertCustomVector" type="button">Insérer le vecteur</button>
+          </div>
+        </details>
+        <details class="vector-tool">
+          <summary>Vecteur de coordonnées en colonne</summary>
+          <div class="vector-tool-body">
+            <div>
+              <label class="tool-label" for="coordinateDimension">Dimension</label>
+              <select class="tool-select" id="coordinateDimension">
+                <option value="2">2D — deux coordonnées</option>
+                <option value="3">3D — trois coordonnées</option>
+              </select>
+            </div>
+            <div class="coord-grid">
+              <div class="coord-field">
+                <label class="tool-label" for="coordinateX">x</label>
+                <input class="tool-input coordinate-input" id="coordinateX" type="text" value="2" maxlength="24" aria-label="Coordonnée x">
+              </div>
+              <div class="coord-field">
+                <label class="tool-label" for="coordinateY">y</label>
+                <input class="tool-input coordinate-input" id="coordinateY" type="text" value="-1" maxlength="24" aria-label="Coordonnée y">
+              </div>
+              <div class="coord-field" id="coordinateZField" hidden>
+                <label class="tool-label" for="coordinateZ">z</label>
+                <input class="tool-input coordinate-input" id="coordinateZ" type="text" value="3" maxlength="24" aria-label="Coordonnée z">
+              </div>
+            </div>
+            <div class="coord-vector-demo" id="coordinatePreview" aria-label="Aperçu du vecteur colonne">
+              <span class="column-vector-bracket left"></span>
+              <span class="column-vector-values"><span class="column-coordinate">2</span><span class="column-coordinate">−1</span></span>
+              <span class="column-vector-bracket right"></span>
+            </div>
+            <p class="tool-hint">Entre des nombres ou des expressions (par exemple ½, a+b). Le vecteur sera inséré verticalement.</p>
+            <button class="btn primary tool-button" id="insertCoordinateVector" type="button">Insérer les coordonnées</button>
+          </div>
+        </details>
+      </section>
       <section class="symbols-wrap" aria-label="Symboles disponibles">
         <div class="symbols-topline"><h3 id="categoryTitle">Symboles de base</h3><span id="symbolCount"></span></div>
         <div class="symbol-grid" id="symbolGrid"></div>
@@ -335,7 +410,7 @@
         const template = document.createElement("template");
         template.innerHTML = String(value || "");
         const allowed = ["BR", "DIV", "P", "SPAN"];
-        const safeClasses = new Set(["vector-token", "fraction-token", "fraction-num", "fraction-den"]);
+        const safeClasses = new Set(["vector-token", "fraction-token", "fraction-num", "fraction-den", "column-vector", "column-vector-values", "column-coordinate", "column-vector-bracket"]);
         Array.from(template.content.querySelectorAll("*")).forEach(function (el) {
           if (!allowed.includes(el.tagName)) {
             el.replaceWith(document.createTextNode(el.textContent || ""));
@@ -479,6 +554,47 @@
         const selection = window.getSelection();
         const next = document.createRange();
         next.setStartAfter(lastNode);
+        next.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(next);
+        rememberedRange = next.cloneRange();
+        registerEdit(previous);
+      }
+
+      function insertColumnVector(values) {
+        board.focus();
+        const previous = board.innerHTML;
+        const range = findBoardRange();
+        range.deleteContents();
+
+        const column = document.createElement("span");
+        column.className = "column-vector";
+        column.setAttribute("contenteditable", "false");
+        column.setAttribute("role", "img");
+        column.setAttribute("aria-label", "Vecteur colonne : " + values.join(", "));
+
+        const leftBracket = document.createElement("span");
+        leftBracket.className = "column-vector-bracket left";
+        leftBracket.setAttribute("aria-hidden", "true");
+        const rows = document.createElement("span");
+        rows.className = "column-vector-values";
+        values.forEach(function (value) {
+          const row = document.createElement("span");
+          row.className = "column-coordinate";
+          row.textContent = value;
+          rows.appendChild(row);
+        });
+        const rightBracket = document.createElement("span");
+        rightBracket.className = "column-vector-bracket right";
+        rightBracket.setAttribute("aria-hidden", "true");
+        column.appendChild(leftBracket);
+        column.appendChild(rows);
+        column.appendChild(rightBracket);
+        range.insertNode(column);
+
+        const selection = window.getSelection();
+        const next = document.createRange();
+        next.setStartAfter(column);
         next.collapse(true);
         selection.removeAllRanges();
         selection.addRange(next);
@@ -639,6 +755,12 @@
           const bottom = node.querySelector(".fraction-den");
           return (top ? nodeToPlainText(top) : "") + "/" + (bottom ? nodeToPlainText(bottom) : "");
         }
+        if (node.classList && node.classList.contains("column-vector")) {
+          const rows = Array.from(node.querySelectorAll(".column-coordinate")).map(function (row) { return nodeToPlainText(row); });
+          if (rows.length === 2) return "⎡" + rows[0] + "⎤\n⎣" + rows[1] + "⎦";
+          if (rows.length === 3) return "⎡" + rows[0] + "⎤\n⎢" + rows[1] + "⎥\n⎣" + rows[2] + "⎦";
+          return rows.join("\n");
+        }
         if (node.tagName === "BR") return "\n";
         let result = "";
         Array.from(node.childNodes).forEach(function (child) { result += nodeToPlainText(child); });
@@ -668,6 +790,17 @@
           return '<span style="display:inline-table;vertical-align:middle;text-align:center;line-height:1.1;font-size:.82em;margin:0 .1em;white-space:nowrap;">' +
             '<span style="display:block;padding:0 .18em .08em;">' + n + '</span>' +
             '<span style="display:block;border-top:1px solid #172a43;padding:.08em .18em 0;">' + d + '</span></span>';
+        }
+        if (node.classList && node.classList.contains("column-vector")) {
+          const rows = Array.from(node.querySelectorAll(".column-coordinate")).map(function (row) { return escapeHtml(row.textContent || ""); });
+          if (!rows.length) return "";
+          const rowHtml = rows.map(function (value) {
+            return '<span style="display:block;min-height:1.12em;text-align:center;padding:.015em .12em;">' + value + '</span>';
+          }).join("");
+          return '<span style="display:inline-flex;align-items:stretch;vertical-align:middle;white-space:nowrap;margin:.08em .12em;font-size:.84em;line-height:1.12;">' +
+            '<span style="display:block;align-self:stretch;width:.42em;margin:.05em 0;border-top:1px solid #172a43;border-bottom:1px solid #172a43;border-left:1px solid #172a43;"></span>' +
+            '<span style="display:flex;flex-direction:column;justify-content:center;min-width:1.1em;text-align:center;padding:.04em .12em;">' + rowHtml + '</span>' +
+            '<span style="display:block;align-self:stretch;width:.42em;margin:.05em 0;border-top:1px solid #172a43;border-bottom:1px solid #172a43;border-right:1px solid #172a43;"></span></span>';
         }
         if (node.tagName === "BR") return "<br>";
         let contents = "";
@@ -776,6 +909,79 @@
         board.focus();
       });
       symbolSearch.addEventListener("input", renderSymbols);
+
+      const customVectorName = document.getElementById("customVectorName");
+      const customVectorPreview = document.getElementById("customVectorPreview");
+      const coordinateDimension = document.getElementById("coordinateDimension");
+      const coordinateZField = document.getElementById("coordinateZField");
+      const coordinatePreview = document.getElementById("coordinatePreview");
+      const coordinateInputs = {
+        x: document.getElementById("coordinateX"),
+        y: document.getElementById("coordinateY"),
+        z: document.getElementById("coordinateZ")
+      };
+
+      function makeElement(tag, className, text) {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        if (text !== undefined) element.textContent = text;
+        return element;
+      }
+
+      function updateCustomVectorPreview() {
+        const name = customVectorName.value.trim() || "v";
+        customVectorPreview.textContent = name;
+        customVectorPreview.setAttribute("aria-label", "aperçu du vecteur " + name);
+      }
+
+      function getCoordinateValues() {
+        const values = [coordinateInputs.x.value.trim(), coordinateInputs.y.value.trim()];
+        if (coordinateDimension.value === "3") values.push(coordinateInputs.z.value.trim());
+        return values;
+      }
+
+      function updateCoordinateControls() {
+        const is3D = coordinateDimension.value === "3";
+        coordinateZField.hidden = !is3D;
+        coordinateInputs.z.disabled = !is3D;
+        const values = getCoordinateValues();
+        coordinatePreview.innerHTML = "";
+        coordinatePreview.appendChild(makeElement("span", "column-vector-bracket left"));
+        const rows = makeElement("span", "column-vector-values");
+        values.forEach(function (value) {
+          rows.appendChild(makeElement("span", "column-coordinate", value || "?"));
+        });
+        coordinatePreview.appendChild(rows);
+        coordinatePreview.appendChild(makeElement("span", "column-vector-bracket right"));
+        coordinatePreview.setAttribute("aria-label", "Aperçu du vecteur colonne : " + values.join(", "));
+      }
+
+      document.getElementById("insertCustomVector").addEventListener("click", function () {
+        const name = customVectorName.value.trim().replace(/\s+/g, "");
+        if (!name) { showToast("Saisis le nom du vecteur."); customVectorName.focus(); return; }
+        if (!/^[\p{L}\p{M}\p{N}_']{1,16}$/u.test(name)) {
+          showToast("Utilise des lettres, des chiffres ou des indices, sans espace ni symbole de ponctuation.");
+          customVectorName.focus();
+          return;
+        }
+        insertVector(name);
+      });
+      customVectorName.addEventListener("input", updateCustomVectorPreview);
+      coordinateDimension.addEventListener("change", updateCoordinateControls);
+      Object.keys(coordinateInputs).forEach(function (key) {
+        coordinateInputs[key].addEventListener("input", updateCoordinateControls);
+      });
+      document.getElementById("insertCoordinateVector").addEventListener("click", function () {
+        const values = getCoordinateValues();
+        if (values.some(function (value) { return !value; })) {
+          showToast("Renseigne toutes les coordonnées visibles.");
+          (values[0] ? values[1] ? coordinateInputs.z : coordinateInputs.y : coordinateInputs.x).focus();
+          return;
+        }
+        insertColumnVector(values);
+      });
+      updateCustomVectorPreview();
+      updateCoordinateControls();
 
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
