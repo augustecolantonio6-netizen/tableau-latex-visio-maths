@@ -149,18 +149,16 @@
     .coord-field[hidden] { display: none; }
     .coord-field { min-width: 0; }
     .coord-vector-demo { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 7px; background: #f6f8fb; border-radius: 7px; color: #364e6f; font: 16px/1.15 "Cambria Math", Cambria, serif; }
-    .column-vector {
-      display: inline-flex; align-items: stretch; vertical-align: middle; white-space: nowrap;
-      margin: .08em .12em; font-size: .84em; line-height: 1.12; user-select: all;
+    .coordinate-tuple {
+      display: inline-flex; align-items: baseline; vertical-align: baseline; white-space: nowrap;
+      margin: 0 .08em; line-height: 1.25; font-variant-numeric: tabular-nums; user-select: all;
     }
-    .column-vector-values { display: flex; flex-direction: column; justify-content: center; min-width: 1.1em; text-align: center; padding: .04em .12em; }
-    .column-coordinate { display: block; min-height: 1.12em; text-align: center; padding: .015em .08em; }
-    .column-vector-bracket { display: block; align-self: stretch; width: .42em; margin: .05em 0; }
-    .column-vector-bracket.left { border-left: 1.35px solid currentColor; border-top: 1.35px solid currentColor; border-bottom: 1.35px solid currentColor; }
-    .column-vector-bracket.right { border-right: 1.35px solid currentColor; border-top: 1.35px solid currentColor; border-bottom: 1.35px solid currentColor; }
-    .vector-token, .column-vector { cursor: pointer; }
-    .vector-token:hover, .column-vector:hover { background: rgba(36,95,202,.07); border-radius: 3px; }
-    .vector-token:focus-visible, .column-vector:focus-visible { outline: 2px solid rgba(36,95,202,.3); outline-offset: 3px; }
+    .coordinate-item { display: inline-block; min-width: .2em; text-align: center; }
+    .coordinate-separator { white-space: pre; }
+    .coord-vector-demo .coordinate-tuple { font-size: 1em; margin: 0; }
+    .vector-token, .coordinate-tuple { cursor: pointer; }
+    .vector-token:hover, .coordinate-tuple:hover { background: rgba(36,95,202,.07); border-radius: 3px; }
+    .vector-token:focus-visible, .coordinate-tuple:focus-visible { outline: 2px solid rgba(36,95,202,.3); outline-offset: 3px; }
     .board-editor-popover {
       position: absolute; z-index: 8; width: min(300px, calc(100% - 20px)); padding: 13px;
       border: 1px solid #d8e1ec; border-radius: 11px; background: #fff;
@@ -259,7 +257,7 @@
             </div>
           </details>
           <details class="vector-tool">
-            <summary>Coordonnées en colonne</summary>
+            <summary>Coordonnées en ligne (x, y, z)</summary>
             <div class="vector-tool-body">
               <div>
                 <label class="tool-label" for="coordinateDimension">Dimension</label>
@@ -282,12 +280,8 @@
                   <input class="tool-input coordinate-input" id="coordinateZ" type="text" value="3" maxlength="24" aria-label="Coordonnée z">
                 </div>
               </div>
-              <div class="coord-vector-demo" id="coordinatePreview" aria-label="Aperçu du vecteur colonne">
-                <span class="column-vector-bracket left"></span>
-                <span class="column-vector-values"><span class="column-coordinate">2</span><span class="column-coordinate">−1</span></span>
-                <span class="column-vector-bracket right"></span>
-              </div>
-              <p class="tool-hint">Entre des nombres ou des expressions. Double-clique sur le vecteur inséré pour le modifier directement.</p>
+              <div class="coord-vector-demo" id="coordinatePreview" aria-label="Aperçu des coordonnées en ligne">(2, −1)</div>
+              <p class="tool-hint">Entre des nombres ou des expressions. Le résultat s’insère en ligne : (x, y) ou (x, y, z). Double-clique dessus pour le modifier.</p>
               <button class="btn primary tool-button" id="insertCoordinateVector" type="button">Insérer les coordonnées</button>
             </div>
           </details>
@@ -426,7 +420,7 @@
         const template = document.createElement("template");
         template.innerHTML = String(value || "");
         const allowed = ["BR", "DIV", "P", "SPAN"];
-        const safeClasses = new Set(["vector-token", "fraction-token", "fraction-num", "fraction-den", "column-vector", "column-vector-values", "column-coordinate", "column-vector-bracket", "column-vector-bracket left", "column-vector-bracket right"]);
+        const safeClasses = new Set(["vector-token", "fraction-token", "fraction-num", "fraction-den", "coordinate-tuple", "coordinate-item", "coordinate-separator"]);
         Array.from(template.content.querySelectorAll("*")).forEach(function (el) {
           if (!allowed.includes(el.tagName)) {
             el.replaceWith(document.createTextNode(el.textContent || ""));
@@ -434,7 +428,7 @@
           }
           Array.from(el.attributes).forEach(function (attr) {
             const interactiveVector = el.classList &&
-              (el.classList.contains("vector-token") || el.classList.contains("column-vector"));
+              (el.classList.contains("vector-token") || el.classList.contains("coordinate-tuple"));
             if (el.tagName === "SPAN" && attr.name === "class" && safeClasses.has(attr.value)) return;
             if (el.tagName === "SPAN" && attr.name === "contenteditable" && attr.value === "false") return;
             if (el.tagName === "SPAN" && interactiveVector && attr.name === "tabindex" && attr.value === "0") return;
@@ -586,46 +580,45 @@
         registerEdit(previous);
       }
 
-      function makeColumnVector(values) {
-        const column = document.createElement("span");
-        column.className = "column-vector";
-        column.setAttribute("contenteditable", "false");
-        column.setAttribute("tabindex", "0");
-        column.setAttribute("role", "button");
-        column.setAttribute("title", "Double-clique pour modifier les coordonnées");
-        column.setAttribute("aria-label", "Vecteur colonne : " + values.join(", ") + ". Double-cliquer pour modifier.");
-        const leftBracket = document.createElement("span");
-        leftBracket.className = "column-vector-bracket left";
-        leftBracket.setAttribute("aria-hidden", "true");
-        const rows = document.createElement("span");
-        rows.className = "column-vector-values";
-        values.forEach(function (value) {
-          const row = document.createElement("span");
-          row.className = "column-coordinate";
-          row.textContent = value;
-          rows.appendChild(row);
+      function makeCoordinateTuple(values, interactive) {
+        const tuple = document.createElement("span");
+        tuple.className = "coordinate-tuple";
+        if (interactive !== false) {
+          tuple.setAttribute("contenteditable", "false");
+          tuple.setAttribute("tabindex", "0");
+          tuple.setAttribute("role", "button");
+          tuple.setAttribute("title", "Double-clique pour modifier les coordonnées");
+          tuple.setAttribute("aria-label", "Coordonnées : " + values.join(", ") + ". Double-cliquer pour modifier.");
+        }
+        tuple.appendChild(document.createTextNode("("));
+        values.forEach(function (value, index) {
+          if (index > 0) {
+            const separator = document.createElement("span");
+            separator.className = "coordinate-separator";
+            separator.textContent = ", ";
+            tuple.appendChild(separator);
+          }
+          const item = document.createElement("span");
+          item.className = "coordinate-item";
+          item.textContent = value;
+          tuple.appendChild(item);
         });
-        const rightBracket = document.createElement("span");
-        rightBracket.className = "column-vector-bracket right";
-        rightBracket.setAttribute("aria-hidden", "true");
-        column.appendChild(leftBracket);
-        column.appendChild(rows);
-        column.appendChild(rightBracket);
-        return column;
+        tuple.appendChild(document.createTextNode(")"));
+        return tuple;
       }
 
-      function insertColumnVector(values) {
+      function insertCoordinateTuple(values) {
         board.focus();
         const previous = board.innerHTML;
         const range = findBoardRange();
         range.deleteContents();
 
-        const column = makeColumnVector(values);
-        range.insertNode(column);
+        const tuple = makeCoordinateTuple(values);
+        range.insertNode(tuple);
 
         const selection = window.getSelection();
         const next = document.createRange();
-        next.setStartAfter(column);
+        next.setStartAfter(tuple);
         next.collapse(true);
         selection.removeAllRanges();
         selection.addRange(next);
@@ -849,17 +842,17 @@
       }
 
       function openBoardEditor(token) {
-        const isColumn = token.classList.contains("column-vector");
+        const isCoordinate = token.classList.contains("coordinate-tuple");
         editingBoardToken = token;
         boardEditorPopover.replaceChildren();
 
         const form = document.createElement("form");
         const heading = document.createElement("h3");
         heading.className = "board-editor-title";
-        heading.textContent = isColumn ? "Modifier les coordonnées" : "Modifier le vecteur";
+        heading.textContent = isCoordinate ? "Modifier les coordonnées" : "Modifier le vecteur";
         const help = document.createElement("p");
         help.className = "board-editor-help";
-        help.textContent = isColumn
+        help.textContent = isCoordinate
           ? "Modifie les coordonnées ou change la dimension. Le rendu sur le tableau sera actualisé."
           : "Change le nom du vecteur directement ici. Sa flèche s’adapte automatiquement.";
         const fields = document.createElement("div");
@@ -872,13 +865,13 @@
         let dimensionSelect = null;
         let coordinateGrid = null;
 
-        if (!isColumn) {
+        if (!isCoordinate) {
           const field = createLabeledInput("Nom du vecteur", token.textContent || "", 16);
           vectorNameInput = field.input;
           vectorNameInput.maxLength = 16;
           fields.appendChild(field.wrap);
         } else {
-          const oldValues = Array.from(token.querySelectorAll(".column-coordinate")).map(function (row) { return row.textContent || ""; });
+          const oldValues = Array.from(token.querySelectorAll(".coordinate-item")).map(function (row) { return row.textContent || ""; });
           const dimWrap = document.createElement("div");
           const dimLabel = document.createElement("label");
           dimLabel.className = "tool-label";
@@ -934,7 +927,7 @@
         form.addEventListener("submit", function (event) {
           event.preventDefault();
           if (!editingBoardToken || !board.contains(editingBoardToken)) { closeBoardEditor(); return; }
-          if (!isColumn) {
+          if (!isCoordinate) {
             const name = vectorNameInput.value.trim().replace(/\s+/g, "");
             if (!name || !/^[\p{L}\p{M}\p{N}_']{1,16}$/u.test(name)) {
               showToast("Utilise des lettres, des chiffres ou des indices, sans espace ni ponctuation.");
@@ -950,7 +943,7 @@
               if (empty) empty.focus();
               return;
             }
-            commitBoardItemEdit(editingBoardToken, makeColumnVector(values));
+            commitBoardItemEdit(editingBoardToken, makeCoordinateTuple(values));
           }
         });
 
@@ -966,7 +959,7 @@
       board.addEventListener("dblclick", function (event) {
         const target = event.target instanceof Element ? event.target : event.target.parentElement;
         if (!target) return;
-        const token = target.closest(".vector-token, .column-vector");
+        const token = target.closest(".vector-token, .coordinate-tuple");
         if (!token || !board.contains(token)) return;
         event.preventDefault();
         openBoardEditor(token);
@@ -974,7 +967,7 @@
 
       board.addEventListener("keydown", function (event) {
         if ((event.key === "Enter" || event.key === " ") && event.target instanceof Element) {
-          const token = event.target.closest(".vector-token, .column-vector");
+          const token = event.target.closest(".vector-token, .coordinate-tuple");
           if (token && board.contains(token)) {
             event.preventDefault();
             openBoardEditor(token);
@@ -997,11 +990,9 @@
           const bottom = node.querySelector(".fraction-den");
           return (top ? nodeToPlainText(top) : "") + "/" + (bottom ? nodeToPlainText(bottom) : "");
         }
-        if (node.classList && node.classList.contains("column-vector")) {
-          const rows = Array.from(node.querySelectorAll(".column-coordinate")).map(function (row) { return nodeToPlainText(row); });
-          if (rows.length === 2) return "⎡" + rows[0] + "⎤\n⎣" + rows[1] + "⎦";
-          if (rows.length === 3) return "⎡" + rows[0] + "⎤\n⎢" + rows[1] + "⎥\n⎣" + rows[2] + "⎦";
-          return rows.join("\n");
+        if (node.classList && node.classList.contains("coordinate-tuple")) {
+          const values = Array.from(node.querySelectorAll(".coordinate-item")).map(function (item) { return nodeToPlainText(item); });
+          return "(" + values.join(", ") + ")";
         }
         if (node.tagName === "BR") return "\n";
         let result = "";
@@ -1033,16 +1024,11 @@
             '<span style="display:block;padding:0 .18em .08em;">' + n + '</span>' +
             '<span style="display:block;border-top:1px solid #172a43;padding:.08em .18em 0;">' + d + '</span></span>';
         }
-        if (node.classList && node.classList.contains("column-vector")) {
-          const rows = Array.from(node.querySelectorAll(".column-coordinate")).map(function (row) { return escapeHtml(row.textContent || ""); });
-          if (!rows.length) return "";
-          const rowHtml = rows.map(function (value) {
-            return '<span style="display:block;min-height:1.12em;text-align:center;padding:.015em .12em;">' + value + '</span>';
-          }).join("");
-          return '<span style="display:inline-flex;align-items:stretch;vertical-align:middle;white-space:nowrap;margin:.08em .12em;font-size:.84em;line-height:1.12;">' +
-            '<span style="display:block;align-self:stretch;width:.42em;margin:.05em 0;border-top:1px solid #172a43;border-bottom:1px solid #172a43;border-left:1px solid #172a43;"></span>' +
-            '<span style="display:flex;flex-direction:column;justify-content:center;min-width:1.1em;text-align:center;padding:.04em .12em;">' + rowHtml + '</span>' +
-            '<span style="display:block;align-self:stretch;width:.42em;margin:.05em 0;border-top:1px solid #172a43;border-bottom:1px solid #172a43;border-right:1px solid #172a43;"></span></span>';
+        if (node.classList && node.classList.contains("coordinate-tuple")) {
+          const values = Array.from(node.querySelectorAll(".coordinate-item")).map(function (item) { return escapeHtml(item.textContent || ""); });
+          return '<span style="display:inline-flex;align-items:baseline;vertical-align:baseline;white-space:nowrap;margin:0 .08em;line-height:1.25;font-variant-numeric:tabular-nums;">(' +
+            values.map(function (value) { return '<span style="display:inline-block;min-width:.2em;text-align:center;">' + value + '</span>'; }).join('<span style="white-space:pre;">, </span>') +
+            ')</span>';
         }
         if (node.tagName === "BR") return "<br>";
         let contents = "";
@@ -1188,15 +1174,8 @@
         coordinateZField.hidden = !is3D;
         coordinateInputs.z.disabled = !is3D;
         const values = getCoordinateValues();
-        coordinatePreview.innerHTML = "";
-        coordinatePreview.appendChild(makeElement("span", "column-vector-bracket left"));
-        const rows = makeElement("span", "column-vector-values");
-        values.forEach(function (value) {
-          rows.appendChild(makeElement("span", "column-coordinate", value || "?"));
-        });
-        coordinatePreview.appendChild(rows);
-        coordinatePreview.appendChild(makeElement("span", "column-vector-bracket right"));
-        coordinatePreview.setAttribute("aria-label", "Aperçu du vecteur colonne : " + values.join(", "));
+        coordinatePreview.replaceChildren(makeCoordinateTuple(values.map(function (value) { return value || "?"; }), false));
+        coordinatePreview.setAttribute("aria-label", "Aperçu des coordonnées : (" + values.join(", ") + ")");
       }
 
       document.getElementById("insertCustomVector").addEventListener("click", function () {
@@ -1221,7 +1200,7 @@
           (values[0] ? values[1] ? coordinateInputs.z : coordinateInputs.y : coordinateInputs.x).focus();
           return;
         }
-        insertColumnVector(values);
+        insertCoordinateTuple(values);
       });
       updateCustomVectorPreview();
       updateCoordinateControls();
