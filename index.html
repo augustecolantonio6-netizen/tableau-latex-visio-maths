@@ -101,6 +101,11 @@
       padding: .08em .09em .02em .02em; line-height: 1.05;
       white-space: nowrap; vertical-align: baseline; user-select: all;
     }
+    .vector-combo-preview {
+      display: inline-flex; align-items: baseline; gap: 0;
+      font: inherit; line-height: 1.1; white-space: nowrap;
+    }
+    .vector-combo-preview .combo-text { display: inline-block; white-space: pre; }
     .vector-token::before, .vector-preview::before {
       content: ""; position: absolute; left: 0; right: -.04em; top: .04em;
       border-top: 1.35px solid currentColor; pointer-events: none;
@@ -209,7 +214,7 @@
         <div class="word-count" id="wordCount">0 caractère</div>
       </div>
       <div class="board-frame">
-        <div class="board" id="board" contenteditable="true" role="textbox" aria-label="Tableau blanc de mathématiques" aria-multiline="true" spellcheck="false" autocapitalize="off" data-placeholder="Écrivez votre raisonnement ici…&#10;&#10;Exemple : Soient u⃗ et v⃗ deux vecteurs."></div>
+        <div class="board" id="board" contenteditable="true" role="textbox" aria-label="Tableau blanc de mathématiques" aria-multiline="true" spellcheck="false" autocapitalize="off" data-placeholder="Écrivez votre raisonnement ici…&#10;&#10;Utilisez la bibliothèque pour insérer des vecteurs et des fractions."></div>
       </div>
       <div class="workspace-footer">
         <div class="keyboard-tip"><span>Raccourci :</span><kbd>Ctrl</kbd> + <kbd>Z</kbd><span>pour annuler</span></div>
@@ -274,8 +279,10 @@
           { label: "OA⃗", vector: "OA", hint: "vecteur OA" }, { label: "MN⃗", vector: "MN", hint: "vecteur MN" },
           { label: "→", insert: " → ", hint: "flèche vers la droite" }, { label: "↔", insert: " ↔ ", hint: "flèche dans les deux sens" },
           { label: "∥", insert: " ∥ ", hint: "parallèle" }, { label: "⊥", insert: " ⊥ ", hint: "perpendiculaire" },
-          { label: "u⃗ + v⃗", insert: "u⃗ + v⃗", hint: "somme de vecteurs" }, { label: "u⃗ · v⃗", insert: "u⃗ · v⃗", hint: "produit scalaire" },
-          { label: "λu⃗", insert: "λu⃗", hint: "multiplication par un scalaire" }, { label: "‖u⃗‖", insert: "‖u⃗‖", hint: "norme d'un vecteur" }
+          { label: "u⃗ + v⃗", parts: [{ vector: "u" }, { text: " + " }, { vector: "v" }], hint: "somme de vecteurs" },
+          { label: "u⃗ · v⃗", parts: [{ vector: "u" }, { text: " · " }, { vector: "v" }], hint: "produit scalaire" },
+          { label: "λu⃗", parts: [{ text: "λ" }, { vector: "u" }], hint: "multiplication par un scalaire" },
+          { label: "‖u⃗‖", parts: [{ text: "‖" }, { vector: "u" }, { text: "‖" }], hint: "norme d'un vecteur" }
         ],
         powers: [
           { label: "²", insert: "²", hint: "exposant deux" }, { label: "³", insert: "³", hint: "exposant trois" },
@@ -446,6 +453,39 @@
         registerEdit(previous);
       }
 
+      function insertVectorExpression(parts) {
+        board.focus();
+        const previous = board.innerHTML;
+        const range = findBoardRange();
+        range.deleteContents();
+
+        const fragment = document.createDocumentFragment();
+        parts.forEach(function (part) {
+          if (part.vector) {
+            const token = document.createElement("span");
+            token.className = "vector-token";
+            token.setAttribute("contenteditable", "false");
+            token.setAttribute("aria-label", "vecteur " + part.vector);
+            token.textContent = part.vector;
+            fragment.appendChild(token);
+          } else if (part.text) {
+            fragment.appendChild(document.createTextNode(part.text));
+          }
+        });
+        const lastNode = fragment.lastChild;
+        if (!lastNode) return;
+        range.insertNode(fragment);
+
+        const selection = window.getSelection();
+        const next = document.createRange();
+        next.setStartAfter(lastNode);
+        next.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(next);
+        rememberedRange = next.cloneRange();
+        registerEdit(previous);
+      }
+
       function insertFraction(numerator, denominator, template) {
         board.focus();
         const previous = board.innerHTML;
@@ -554,6 +594,21 @@
             preview.appendChild(top);
             preview.appendChild(bottom);
             button.appendChild(preview);
+          } else if (item.parts) {
+            const combo = document.createElement("span");
+            combo.className = "vector-combo-preview";
+            item.parts.forEach(function (part) {
+              const piece = document.createElement("span");
+              if (part.vector) {
+                piece.className = "vector-preview";
+                piece.textContent = part.vector;
+              } else {
+                piece.className = "combo-text";
+                piece.textContent = part.text || "";
+              }
+              combo.appendChild(piece);
+            });
+            button.appendChild(combo);
           } else if (item.vector) {
             const preview = document.createElement("span");
             preview.className = "vector-preview";
@@ -566,7 +621,8 @@
           button.setAttribute("aria-label", "Insérer " + item.hint);
           button.addEventListener("mousedown", function (event) { event.preventDefault(); });
           button.addEventListener("click", function () {
-            if (item.vector) insertVector(item.vector);
+            if (item.parts) insertVectorExpression(item.parts);
+            else if (item.vector) insertVector(item.vector);
             else if (item.numerator !== undefined) insertFraction(item.numerator, item.denominator, Boolean(item.template));
             else insertText(item.insert, Boolean(item.template));
           });
