@@ -97,15 +97,33 @@
     .board:empty::before { content: attr(data-placeholder); color: #a2adbb; pointer-events: none; }
     .board:focus { border-color: #bed1ef; box-shadow: 0 0 0 3px rgba(36, 95, 202, .06), 0 3px 12px rgba(29,47,71,.06); }
     .vector-token {
-      position: relative; display: inline-block; padding-top: .12em; line-height: 1.2; white-space: nowrap;
+      position: relative; display: inline-block; padding: .22em .08em 0 .02em; line-height: 1.1;
+      white-space: nowrap; vertical-align: baseline; user-select: all;
     }
     .vector-token::before {
-      content: ""; position: absolute; left: .02em; right: .08em; top: .1em; border-top: 1px solid currentColor;
+      content: ""; position: absolute; left: .02em; right: .10em; top: .06em;
+      border-top: 1.2px solid currentColor; pointer-events: none;
     }
     .vector-token::after {
-      content: "→"; position: absolute; top: -.48em; right: -.04em; padding-left: 1px; background: #fff;
-      font: .68em/1.1 "Cambria Math", Cambria, serif;
+      content: "›"; position: absolute; top: -.20em; right: -.04em; padding: 0;
+      background: transparent; font: 700 .82em/1 "Cambria Math", Cambria, serif;
+      transform: scaleX(.86); pointer-events: none;
     }
+    .fraction-token {
+      display: inline-grid; grid-template-rows: auto auto; align-items: stretch;
+      vertical-align: middle; text-align: center; line-height: 1.12; font-size: .78em;
+      margin: 0 .09em; min-width: 1.05em; white-space: nowrap;
+    }
+    .fraction-num, .fraction-den { display: block; min-width: .85em; padding-left: .16em; padding-right: .16em; text-align: center; }
+    .fraction-num { padding-top: .01em; padding-bottom: .07em; }
+    .fraction-den { border-top: 1.3px solid currentColor; padding-top: .07em; padding-bottom: .01em; }
+    .fraction-preview {
+      display: inline-grid; grid-template-rows: auto auto; vertical-align: middle;
+      text-align: center; font-size: 13px; line-height: 1.02; min-width: 1.35em;
+    }
+    .fraction-preview-num, .fraction-preview-den { min-width: 1.2em; padding: 1px 3px; text-align: center; }
+    .fraction-preview-den { border-top: 1px solid currentColor; }
+    .fraction-token .fraction-num:focus, .fraction-token .fraction-den:focus { background: #edf4ff; outline: none; }
     .workspace-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
     .keyboard-tip { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; }
     kbd { padding: 2px 5px; border: 1px solid #dfe5ec; border-radius: 4px; background: #f8fafc; color: #617086; font: 10px ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -236,14 +254,14 @@
           { label: "|x|", insert: "|x|", hint: "valeur absolue" }, { label: "‖x‖", insert: "‖x‖", hint: "norme" }
         ],
         fractions: [
-          { label: "½", insert: "½", hint: "un demi" }, { label: "⅓", insert: "⅓", hint: "un tiers" },
-          { label: "⅔", insert: "⅔", hint: "deux tiers" }, { label: "¼", insert: "¼", hint: "un quart" },
-          { label: "¾", insert: "¾", hint: "trois quarts" }, { label: "⅕", insert: "⅕", hint: "un cinquième" },
-          { label: "⅖", insert: "⅖", hint: "deux cinquièmes" }, { label: "⅗", insert: "⅗", hint: "trois cinquièmes" },
-          { label: "⅘", insert: "⅘", hint: "quatre cinquièmes" }, { label: "⅙", insert: "⅙", hint: "un sixième" },
-          { label: "⅚", insert: "⅚", hint: "cinq sixièmes" }, { label: "⅛", insert: "⅛", hint: "un huitième" },
-          { label: "⅜", insert: "⅜", hint: "trois huitièmes" }, { label: "⅝", insert: "⅝", hint: "cinq huitièmes" },
-          { label: "⅞", insert: "⅞", hint: "sept huitièmes" }, { label: "□⁄□", insert: "□⁄□", hint: "fraction à compléter", template: true }
+          { label: "½", numerator: "1", denominator: "2", hint: "un demi" }, { label: "⅓", numerator: "1", denominator: "3", hint: "un tiers" },
+          { label: "⅔", numerator: "2", denominator: "3", hint: "deux tiers" }, { label: "¼", numerator: "1", denominator: "4", hint: "un quart" },
+          { label: "¾", numerator: "3", denominator: "4", hint: "trois quarts" }, { label: "⅕", numerator: "1", denominator: "5", hint: "un cinquième" },
+          { label: "⅖", numerator: "2", denominator: "5", hint: "deux cinquièmes" }, { label: "⅗", numerator: "3", denominator: "5", hint: "trois cinquièmes" },
+          { label: "⅘", numerator: "4", denominator: "5", hint: "quatre cinquièmes" }, { label: "⅙", numerator: "1", denominator: "6", hint: "un sixième" },
+          { label: "⅚", numerator: "5", denominator: "6", hint: "cinq sixièmes" }, { label: "⅛", numerator: "1", denominator: "8", hint: "un huitième" },
+          { label: "⅜", numerator: "3", denominator: "8", hint: "trois huitièmes" }, { label: "⅝", numerator: "5", denominator: "8", hint: "cinq huitièmes" },
+          { label: "⅞", numerator: "7", denominator: "8", hint: "sept huitièmes" }, { label: "□⁄□", numerator: "□", denominator: "□", hint: "fraction à compléter", template: true }
         ],
         vectors: [
           { label: "u⃗", vector: "u", hint: "vecteur u" }, { label: "v⃗", vector: "v", hint: "vecteur v" },
@@ -308,13 +326,15 @@
         const template = document.createElement("template");
         template.innerHTML = String(value || "");
         const allowed = ["BR", "DIV", "P", "SPAN"];
+        const safeClasses = new Set(["vector-token", "fraction-token", "fraction-num", "fraction-den"]);
         Array.from(template.content.querySelectorAll("*")).forEach(function (el) {
           if (!allowed.includes(el.tagName)) {
             el.replaceWith(document.createTextNode(el.textContent || ""));
             return;
           }
           Array.from(el.attributes).forEach(function (attr) {
-            if (el.tagName === "SPAN" && attr.name === "class" && attr.value === "vector-token") return;
+            if (el.tagName === "SPAN" && attr.name === "class" && safeClasses.has(attr.value)) return;
+            if (el.tagName === "SPAN" && attr.name === "contenteditable" && attr.value === "false") return;
             el.removeAttribute(attr.name);
           });
         });
@@ -410,12 +430,48 @@
         range.deleteContents();
         const token = document.createElement("span");
         token.className = "vector-token";
+        token.setAttribute("contenteditable", "false");
+        token.setAttribute("aria-label", "vecteur " + value);
         token.textContent = value;
         range.insertNode(token);
         const selection = window.getSelection();
         const next = document.createRange();
         next.setStartAfter(token);
         next.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(next);
+        rememberedRange = next.cloneRange();
+        registerEdit(previous);
+      }
+
+      function insertFraction(numerator, denominator, template) {
+        board.focus();
+        const previous = board.innerHTML;
+        const range = findBoardRange();
+        range.deleteContents();
+
+        const fraction = document.createElement("span");
+        fraction.className = "fraction-token";
+        fraction.setAttribute("role", "group");
+        fraction.setAttribute("aria-label", "fraction");
+        const top = document.createElement("span");
+        top.className = "fraction-num";
+        const bottom = document.createElement("span");
+        bottom.className = "fraction-den";
+        top.textContent = String(numerator);
+        bottom.textContent = String(denominator);
+        fraction.appendChild(top);
+        fraction.appendChild(bottom);
+        range.insertNode(fraction);
+
+        const selection = window.getSelection();
+        const next = document.createRange();
+        if (template) {
+          next.selectNodeContents(top);
+        } else {
+          next.setStartAfter(fraction);
+          next.collapse(true);
+        }
         selection.removeAllRanges();
         selection.addRange(next);
         rememberedRange = next.cloneRange();
@@ -484,12 +540,27 @@
           const button = document.createElement("button");
           button.type = "button";
           button.className = "symbol-btn" + (item.vector ? " vector-symbol" : "");
-          button.textContent = item.label;
+          if (item.numerator !== undefined) {
+            const preview = document.createElement("span");
+            preview.className = "fraction-preview";
+            const top = document.createElement("span");
+            top.className = "fraction-preview-num";
+            top.textContent = item.numerator;
+            const bottom = document.createElement("span");
+            bottom.className = "fraction-preview-den";
+            bottom.textContent = item.denominator;
+            preview.appendChild(top);
+            preview.appendChild(bottom);
+            button.appendChild(preview);
+          } else {
+            button.textContent = item.label;
+          }
           button.title = item.hint;
           button.setAttribute("aria-label", "Insérer " + item.hint);
           button.addEventListener("mousedown", function (event) { event.preventDefault(); });
           button.addEventListener("click", function () {
             if (item.vector) insertVector(item.vector);
+            else if (item.numerator !== undefined) insertFraction(item.numerator, item.denominator, Boolean(item.template));
             else insertText(item.insert, Boolean(item.template));
           });
           symbolGrid.appendChild(button);
@@ -500,6 +571,11 @@
         if (node.nodeType === Node.TEXT_NODE) return node.nodeValue || "";
         if (node.nodeType !== Node.ELEMENT_NODE) return "";
         if (node.classList && node.classList.contains("vector-token")) return node.textContent + "\u20D7";
+        if (node.classList && node.classList.contains("fraction-token")) {
+          const top = node.querySelector(".fraction-num");
+          const bottom = node.querySelector(".fraction-den");
+          return (top ? nodeToPlainText(top) : "") + "/" + (bottom ? nodeToPlainText(bottom) : "");
+        }
         if (node.tagName === "BR") return "\n";
         let result = "";
         Array.from(node.childNodes).forEach(function (child) { result += nodeToPlainText(child); });
@@ -516,8 +592,17 @@
         if (node.nodeType !== Node.ELEMENT_NODE) return "";
         if (node.classList && node.classList.contains("vector-token")) {
           const label = escapeHtml(node.textContent || "");
-          return '<span style="display:inline-block;position:relative;padding-top:.18em;border-top:1px solid #172a43;line-height:1.2;white-space:nowrap;">' +
-            label + '<span style="position:absolute;right:-.04em;top:-.48em;background:#fff;font-family:serif;font-size:.72em;line-height:1.1;">→</span></span>';
+          return '<span style="display:inline-block;position:relative;padding:.20em .08em 0 .02em;border-top:1px solid #172a43;line-height:1.1;white-space:nowrap;">' +
+            label + '<span style="position:absolute;right:-.04em;top:-.20em;font-family:serif;font-size:.82em;font-weight:bold;line-height:1;">›</span></span>';
+        }
+        if (node.classList && node.classList.contains("fraction-token")) {
+          const top = node.querySelector(".fraction-num");
+          const bottom = node.querySelector(".fraction-den");
+          const n = top ? escapeHtml(top.textContent || "") : "";
+          const d = bottom ? escapeHtml(bottom.textContent || "") : "";
+          return '<span style="display:inline-table;vertical-align:middle;text-align:center;line-height:1.1;font-size:.82em;margin:0 .1em;white-space:nowrap;">' +
+            '<span style="display:block;padding:0 .18em .08em;">' + n + '</span>' +
+            '<span style="display:block;border-top:1px solid #172a43;padding:.08em .18em 0;">' + d + '</span></span>';
         }
         if (node.tagName === "BR") return "<br>";
         let contents = "";
