@@ -98,7 +98,7 @@
     .board:focus { border-color: #bed1ef; box-shadow: 0 0 0 3px rgba(36, 95, 202, .06), 0 3px 12px rgba(29,47,71,.06); }
     .vector-token, .vector-preview {
       position: relative; display: inline-block; box-sizing: border-box;
-      padding: .08em .09em .02em .02em; line-height: 1.05;
+      padding: .04em .09em .02em .02em; line-height: 1.05;
       white-space: nowrap; vertical-align: baseline; user-select: all;
     }
     .vector-combo-preview {
@@ -107,12 +107,12 @@
     }
     .vector-combo-preview .combo-text { display: inline-block; white-space: pre; }
     .vector-token::before, .vector-preview::before {
-      content: ""; position: absolute; left: 0; right: -.04em; top: .04em;
+      content: ""; position: absolute; left: 0; right: -.04em; top: .10em;
       border-top: 1.35px solid currentColor; pointer-events: none;
     }
     .vector-token::after, .vector-preview::after {
       content: ""; box-sizing: border-box; position: absolute;
-      right: -.025em; top: -.07em; width: .22em; height: .22em;
+      right: -.025em; top: -.01em; width: .22em; height: .22em;
       border-top: 1.35px solid currentColor; border-right: 1.35px solid currentColor;
       transform: rotate(45deg); transform-origin: center; pointer-events: none;
     }
@@ -655,10 +655,10 @@
         if (node.nodeType !== Node.ELEMENT_NODE) return "";
         if (node.classList && node.classList.contains("vector-token")) {
           const label = escapeHtml(node.textContent || "");
-          return '<span style="display:inline-block;position:relative;box-sizing:border-box;padding:.08em .09em .02em .02em;line-height:1.05;white-space:nowrap;vertical-align:baseline;">' +
+          return '<span style="display:inline-block;position:relative;box-sizing:border-box;padding:.04em .09em .02em .02em;line-height:1.05;white-space:nowrap;vertical-align:baseline;">' +
             label +
-            '<span style="position:absolute;left:0;right:-.04em;top:.04em;border-top:1.35px solid #172a43;"></span>' +
-            '<span style="box-sizing:border-box;position:absolute;right:-.025em;top:-.07em;width:.22em;height:.22em;border-top:1.35px solid #172a43;border-right:1.35px solid #172a43;transform:rotate(45deg);transform-origin:center;"></span></span>';
+            '<span style="position:absolute;left:0;right:-.04em;top:.10em;border-top:1.35px solid #172a43;"></span>' +
+            '<span style="box-sizing:border-box;position:absolute;right:-.025em;top:-.01em;width:.22em;height:.22em;border-top:1.35px solid #172a43;border-right:1.35px solid #172a43;transform:rotate(45deg);transform-origin:center;"></span></span>';
         }
         if (node.classList && node.classList.contains("fraction-token")) {
           const top = node.querySelector(".fraction-num");
