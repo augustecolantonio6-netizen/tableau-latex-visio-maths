@@ -145,6 +145,7 @@
     .tool-hint { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.45; }
     .tool-button { width: 100%; min-height: 35px; padding: 7px 10px; font-size: 11px; }
     .coord-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
+    .coord-grid.two-dimensional { grid-template-columns: repeat(2,minmax(0,1fr)); }
     .coord-field[hidden] { display: none; }
     .coord-field { min-width: 0; }
     .coord-vector-demo { display: flex; align-items: center; justify-content: center; gap: 4px; padding: 7px; background: #f6f8fb; border-radius: 7px; color: #364e6f; font: 16px/1.15 "Cambria Math", Cambria, serif; }
@@ -942,6 +943,7 @@
 
       function updateCoordinateControls() {
         const is3D = coordinateDimension.value === "3";
+        document.querySelector(".coord-grid").classList.toggle("two-dimensional", !is3D);
         coordinateZField.hidden = !is3D;
         coordinateInputs.z.disabled = !is3D;
         const values = getCoordinateValues();
