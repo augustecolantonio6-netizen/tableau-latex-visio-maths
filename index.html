@@ -410,7 +410,7 @@
         const template = document.createElement("template");
         template.innerHTML = String(value || "");
         const allowed = ["BR", "DIV", "P", "SPAN"];
-        const safeClasses = new Set(["vector-token", "fraction-token", "fraction-num", "fraction-den", "column-vector", "column-vector-values", "column-coordinate", "column-vector-bracket"]);
+        const safeClasses = new Set(["vector-token", "fraction-token", "fraction-num", "fraction-den", "column-vector", "column-vector-values", "column-coordinate", "column-vector-bracket", "column-vector-bracket left", "column-vector-bracket right"]);
         Array.from(template.content.querySelectorAll("*")).forEach(function (el) {
           if (!allowed.includes(el.tagName)) {
             el.replaceWith(document.createTextNode(el.textContent || ""));
