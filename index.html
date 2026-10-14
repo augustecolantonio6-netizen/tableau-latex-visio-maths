@@ -294,7 +294,7 @@
         </section>
         <div class="symbol-grid" id="symbolGrid"></div>
       </section>
-      <div class="library-foot"><strong>Astuce vecteurs :</strong> les boutons <em>u⃗, v⃗, AB⃗</em> affichent une flèche au-dessus de la lettre ou du nom. À la copie, la notation devient du texte Unicode.</div>
+      <div class="library-foot"><strong>Astuce :</strong> les outils sont dans l’onglet <em>Outils</em>. Double-clique sur un vecteur ou une colonne de coordonnées dans le tableau pour modifier son nom, ses coordonnées ou sa dimension directement sur place.</div>
     </aside>
 
     <section class="workspace" aria-labelledby="boardTitle">
@@ -334,7 +334,7 @@
         { id: "base", label: "Bases", title: "Symboles de base" },
         { id: "fractions", label: "Fractions", title: "Fractions à barre horizontale" },
         { id: "vectors", label: "Vecteurs", title: "Vecteurs et géométrie vectorielle" },
-        { id: "create", label: "Créer", title: "Créer et personnaliser des vecteurs" },
+        { id: "create", label: "Outils", title: "Outils vecteurs : création et personnalisation" },
         { id: "powers", label: "Puissances", title: "Puissances, indices et racines" },
         { id: "greek", label: "Grec", title: "Alphabet grec" },
         { id: "relations", label: "Relations", title: "Relations et quantificateurs" }
@@ -433,8 +433,14 @@
             return;
           }
           Array.from(el.attributes).forEach(function (attr) {
+            const interactiveVector = el.classList &&
+              (el.classList.contains("vector-token") || el.classList.contains("column-vector"));
             if (el.tagName === "SPAN" && attr.name === "class" && safeClasses.has(attr.value)) return;
             if (el.tagName === "SPAN" && attr.name === "contenteditable" && attr.value === "false") return;
+            if (el.tagName === "SPAN" && interactiveVector && attr.name === "tabindex" && attr.value === "0") return;
+            if (el.tagName === "SPAN" && interactiveVector && attr.name === "role" && attr.value === "button") return;
+            if (el.tagName === "SPAN" && interactiveVector && attr.name === "title") return;
+            if (el.tagName === "SPAN" && interactiveVector && attr.name === "aria-label") return;
             el.removeAttribute(attr.name);
           });
         });
@@ -789,19 +795,22 @@
         editingBoardToken = null;
       }
 
+      let boardEditorInputId = 0;
+
       function createLabeledInput(labelText, value, maxLength) {
         const wrap = document.createElement("div");
         const label = document.createElement("label");
         label.className = "tool-label";
         label.textContent = labelText;
         const input = document.createElement("input");
+        input.id = "board-edit-field-" + (++boardEditorInputId);
+        label.htmlFor = input.id;
         input.className = "tool-input";
         input.type = "text";
         input.value = value;
         input.maxLength = maxLength || 24;
         input.autocomplete = "off";
         input.spellcheck = false;
-        label.appendChild(input);
         wrap.appendChild(label);
         wrap.appendChild(input);
         return { wrap: wrap, input: input };
