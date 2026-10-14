@@ -6,8 +6,10 @@ Tableau blanc de mathématiques pensé pour une séance en visioconférence : é
 
 - **Édition directe** : écrire dans le tableau, sans afficher de code LaTeX.
 - **Bibliothèque de symboles** : bases, fractions empilées avec barre horizontale, vecteurs, puissances/indices/racines, alphabet grec et relations.
+- **Outils vecteurs intégrés à la bibliothèque** : les outils de création sont regroupés dans l'onglet « Outils » au même endroit que les symboles.
 - **Vecteurs personnalisés** : crée un vecteur avec le nom de ton choix (par exemple MN, w ou u₁), sans être limité à la bibliothèque prédéfinie.
 - **Coordonnées en colonne** : crée un vecteur en 2D ou 3D avec les coordonnées saisies, affichées verticalement entre crochets.
+- **Modification directe** : double-clique sur un vecteur ou un vecteur colonne dans le tableau pour modifier son nom, ses coordonnées ou sa dimension sans le supprimer et le recréer.
 - **Vecteurs mis en évidence** : les symboles de la bibliothèque et les vecteurs personnalisés affichent une flèche dessinée au-dessus du nom.
 - **Copie texte** : copie une notation mathématique Unicode, pas du LaTeX brut. Les coordonnées en colonne utilisent des crochets Unicode et des retours à la ligne.
 - **Copie texte + rendu** : place du texte brut et du HTML mis en forme dans le presse-papiers lorsque le navigateur autorise l'écriture enrichie.
