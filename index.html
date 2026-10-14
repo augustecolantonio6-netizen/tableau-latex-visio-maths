@@ -96,15 +96,15 @@
     }
     .board:empty::before { content: attr(data-placeholder); color: #a2adbb; pointer-events: none; }
     .board:focus { border-color: #bed1ef; box-shadow: 0 0 0 3px rgba(36, 95, 202, .06), 0 3px 12px rgba(29,47,71,.06); }
-    .vector-token {
+    .vector-token, .vector-preview {
       position: relative; display: inline-block; padding: .22em .08em 0 .02em; line-height: 1.1;
       white-space: nowrap; vertical-align: baseline; user-select: all;
     }
-    .vector-token::before {
+    .vector-token::before, .vector-preview::before {
       content: ""; position: absolute; left: .02em; right: .10em; top: .06em;
       border-top: 1.2px solid currentColor; pointer-events: none;
     }
-    .vector-token::after {
+    .vector-token::after, .vector-preview::after {
       content: "›"; position: absolute; top: -.20em; right: -.04em; padding: 0;
       background: transparent; font: 700 .82em/1 "Cambria Math", Cambria, serif;
       transform: scaleX(.86); pointer-events: none;
@@ -551,6 +551,11 @@
             bottom.textContent = item.denominator;
             preview.appendChild(top);
             preview.appendChild(bottom);
+            button.appendChild(preview);
+          } else if (item.vector) {
+            const preview = document.createElement("span");
+            preview.className = "vector-preview";
+            preview.textContent = item.vector;
             button.appendChild(preview);
           } else {
             button.textContent = item.label;
